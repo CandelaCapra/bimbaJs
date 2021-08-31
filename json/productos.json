@@ -1,0 +1,20 @@
+[
+    {
+        "nombre": "shampoo",
+        "precio":900,
+        "descripcion":"Aceite de coco, harina de avena, té de tilo y escencia de vainilla.",
+        "stock": 1
+    },
+    {
+        "nombre": "acondicionador",
+        "precio":700,
+        "descripcion":"Manteca de karité, aceite de coco y escencia de naranja y mandarina",
+        "stock": 10
+
+    },{
+        "nombre": "combo",
+        "precio":1100,
+        "descripcion":"Combo shampoo sólido con esencia de vainilla y acondicionador sólido con escencia de naranja y mandarina.",
+        "stock": 15
+    }
+]
