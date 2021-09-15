@@ -1,34 +1,98 @@
-/*------MODIFICO LOS MÁRGENES O PADDING-----*/
+/*------ESTILOS GENERALES------*/
+body{
+    font-family:'Raleway', sans-serif;
+}
+.tamanoIcono{
+    font-size: 1.5rem;
+}
+
+/*------ESTILOS DEL HEADER------*/
+header {
+    position: fixed;
+    width: 100%;
+    top: 0rem;;
+    left:0;
+    transition: 0.7s;
+    z-index: 10;
+}
+header a{
+    color: #ffffff !important;
+    margin: 0 1rem;
+    font-size: 0.90rem;
+}
+#btn-logo{
+    font-family: 'MonteCarlo', cursive;
+    font-size: 2.5rem;
+    color: #ffffff;
+}
 .menuNavegacion{
-    margin: 0.5rem 3rem;
+    background-color: #E8F5E9;
 }
-main {
-    margin: 3rem;
-}
-.eliminarImg{
-    width: 1.2rem;
-    padding-top: 2rem;
-}
-.carrito {
-    padding: 0.25rem;
+.menuNavegacion a {
+    color: #212121 !important;
 }
 
-/*------ESTILO DEL FOOTER------*/
-footer{
-    background-color: lightgrey;
+/*------ESTILOS DEL MAIN------*/
+h2 {
+    font-weight: 400;
+}
+.seccionInicio-img-fondo{
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    background-image: url(../images/background.png);
+    background-size: cover;
+    background-position:center;
+}
+.seccionInicio-texto {
+    font-size: 1.5rem;
+    padding-top:40vh;
+    font-weight: 700;
+    letter-spacing: 0.1rem;
+}
+.seccionInicio-titulo{
+    font-size: 3rem;
+    margin: 0 1.5rem;
+}
+.swal-button {
+    background-color: #007E33;
+}
+.btn-agregar-carrito {
+    background-color: #BFF0CF;
+    width: 2.7rem;
+    height: 2.7rem;
+    border-radius: 50%;
+    position: absolute;
+    right:0.7em;
+    margin-bottom: 0.7rem;
+    display: none;
+}
+.accordion-button {
+    box-shadow: none !important;
+}
+.accordion-button:not(.collapsed) {
+    color: #007E33;
+    background-color: #E8F5E9;
+    font-weight: 500; 
 }
 
-/*------ELIMINO ESTILOD HEREDADOS DE BOOTSTRAP------*/
-.list-group-item{
-    border: none;
-}
-#imgCarrito {
-    padding: 0;
+/*------BOTON FLOTANTE DEL CARRITO PARA PANTALLAS PEQUEÑAS------*/
+#btn-flotante-carrito {
+    background-color: #BFF0CF;
+    border-radius: 50%;
+    width:2.5rem;
+    height: 2.5rem;
 }
 
-/*------DISPLAY NONE PARA USAR ANIMACIONES DE JQUERY------*/
-#grillaProductos>div, .mensaje, #formularioEnvio, #formularioCuotas{
+/*------DISPLAY NONE PARA PODER MANIPULAR CON ANIMACIONES DE JQUERY------*/
+#grillaProductos>div, #formularioEnvio{
     display: none;
 }
 
-
+/*------ESTILOS DEL FOOTER------*/
+footer{
+    background-color: #E8F5E9;
+}
+footer p {
+    font-size: 0.88rem;
+}

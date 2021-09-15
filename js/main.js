@@ -1,10 +1,11 @@
 //-----CLASE PARA CONSTRUIR PRODUCTOS-----
 class Producto {
-    constructor (nombre, precio, descripcion, stock){
+    constructor (nombre, precio, descripcion, stock, destacado){
         this.nombre= nombre;
         this.precio= parseInt(precio);
         this.descripcion = descripcion;
         this.stock= stock;
+        this.destacado=destacado;
     }
 
     actualizarStock(x){
@@ -12,70 +13,188 @@ class Producto {
     }
 }
 
-
-//-----VARIABLES GLOBALES-----
+//-----DECLARO VARIABLES GLOBALES-----
 const arrayProductos = [];
 let total = 0;
 let arrayCarrito = [];
 
+cargarSitio();
 
-//---------PRODUCTOS----------
-//Obtengo el array de productos desde el archivo JSON
-$.getJSON("../json/productos.json", function (productos) {
-    for (const producto of productos){
-        arrayProductos.push(new Producto (producto.nombre, producto.precio, producto.descripcion, producto.stock));
-        mostrarLista(producto);
+function cargarSitio () {
+    //Cargo los elementos del según el layout asignado a cada tamaño de pantalla
+    cargarSitioSegunMediaQueries();
+
+    //---------CARGO LOS PRODUCTOS----------
+    //Obtengo el array de productos desde el archivo JSON
+    $.getJSON("../json/productos.json", function (productos) {
+        for (const producto of productos){
+            arrayProductos.push(new Producto (producto.nombre, producto.precio, producto.descripcion, producto.stock, producto.destacado));
+            mostrarCard(producto, "grillaProductos");
+            if (producto.destacado===true){
+                mostrarCard(producto, "productosDestacados");
+            }
+        }
+    });
+
+    //------ANIMACIONES Y EVENTOS--------
+    //Cargo animaciones del header
+    $(window).scroll(()=>{
+        if($("#seccionInicio").hasClass("d-none")===false){
+            $("header").toggleClass("menuNavegacion", $(window).scrollTop()>0);
+            $("header i").toggleClass("text-dark", $(window).scrollTop()>0);
+            $(".navbar-toggler").toggleClass("navbar-dark",$(window).scrollTop()===0);
+        }
+    });
+
+    //Eventos para los botones de la página 
+    $(".btn-seccion").click(cargarPagina);
+    $("#menorPrimero").click(ordenar);
+    $("#mayorPrimero").click(ordenar);
+    $(".checkbox").change(filtrar);
+
+    //Eventos del modal
+    $("#btn-finalizar").click(finalizarCompra);
+    $(`#btn-volver`).click(volverCarrito);
+    $(`#btn-pagar`).click(formularioPago);
+} 
+
+//Media queries para que el sitio sea responsive
+function cargarSitioSegunMediaQueries (){
+    if ($(window).width()>=992){
+        $("#navbarSupportedContent ul").append(`<li class="nav-item carrito">  
+                                                    <button type="button" class="btn position-relative p-0" data-bs-toggle="modal" data-bs-target="#carritoModal" id="btn-carrito">
+                                                        <i class="bi bi-cart4 tamanoIcono text-light"></i>
+                                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger mt-1" id="numBadge">0</span>
+                                                    </button>
+                                                </li>`);
+
+        $(`#btn-carrito`).click(siCarritoVacio);
+
+    }else{
+        $("main").append(`<!--Botón flotante para mobile-->
+                        <div class="position-fixed" style="bottom:10vh; right:10vh">
+                            <button type="button" class="btn position-relative p-0" data-bs-toggle="modal" data-bs-target="#carritoModal" id="btn-flotante-carrito">
+                                <i class="bi bi-cart4 tamanoIcono"></i>
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger mt-1" id="numBadge">0</span>
+                            </button>
+                        </div>`)
+        
+        $(`#btn-flotante-carrito`).click(siCarritoVacio);
+
+        $("#btn-filtros").addClass("mb-3 col-12")
+                        .removeClass("col-2");
+        $("#btn-filtros h5").remove();
+        $("#btn-filtros ul").addClass("flex-row justify-content-center");
+        $("#btn-filtros li").removeClass("ps-0 pe-0");
+        $("footer .contacto").addClass("text-center");
     }
-})
+}
+
+//Muestra un mensaje si el carrito está vacío
+function siCarritoVacio () {
+    if ($("#productosCarrito").children().length== 0){
+        mostrarMensaje("El carrito está vacío");
+        desactivarBotones("btn-finalizar");
+        mostrarTotal();
+    }
+}
+
+//Muestro alerts en el carrito
+function mostrarMensaje (mensaje){
+    $("#productosCarrito").append(`<div class="mensaje">
+                                        <div class="text-center mt-4 mb-4">
+                                            <strong>${mensaje}</strong>
+                                        </div>
+                                    </div>`);
+}
+
+function desactivarBotones(idBoton){
+    $(`#${idBoton}`).addClass("disabled");
+}
 
 //Genero las cards en el HTML a partir del array
-function mostrarLista(producto){
-    $("#grillaProductos").append(`<div class="col-sm-6 col-md-4 col-lg-3" id="${producto.nombre}Card">
-                                    <div class="card mb-2 text-center">
-                                        <img src="images/${producto.nombre}.png" class="card-img-top">    
-                                        <div class="card-body">
-                                            <h5 class="card-title text-capitalize fw-bolder">${producto.nombre}</h5>
-                                            <p class="card-text">${producto.descripcion}</p>
-                                            <h3>$${producto.precio}</h3>
-                                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" id="${producto.nombre}Agregar">
-                                            Agregar al carrito
+function mostrarCard(producto,ubicacion){
+    $(`#${ubicacion}`).append(`<div class="col-sm-6 col-md-4 col-lg-3" id="${producto.nombre}Card${ubicacion}">
+                                    <div class="card mb-2 text-center border-0">
+                                        <div class="row align-items-end">    
+                                            <img src="images/${producto.nombre.toLowerCase()}.png" class="card-img-top">   
+                                            <button type="button" class="btn btn-agregar-carrito" data-bs-toggle="modal" data-bs-target="#carritoModal">
+                                                <i class="bi bi-cart4" id="${producto.nombre}Agregar${ubicacion}"></i>
                                             </button>
+                                        </div>
+                                        <div class="card-body pt-2">
+                                            <p class="card-text m-0">${producto.nombre.split(/(?=[A-Z])/).join(" ").toUpperCase()}</p>
+                                            <p class="fw-bolder">$${producto.precio}</p>
                                         </div>
                                     </div>
                                 </div>`);
+
+    $(`#${producto.nombre}Agregar${ubicacion}`).parent().click(agregarAlCarrito);
     
-    $(`#${producto.nombre}Agregar`).click(agregarAlCarrito);
+    //Animación botón agregar al carrito y cards
+    $(`#${producto.nombre}Agregar${ubicacion}`).parents().eq(1).hover((e) =>{
+            $(`#${producto.nombre}Agregar${ubicacion}`).parent().fadeIn();
+        }, (e)=>{
+            $(`#${producto.nombre}Agregar${ubicacion}`).parent().hide();
+    });
 
     $("#grillaProductos div").first().fadeIn("fast",function showNext() {
         $(this).next("div").fadeIn("fast", showNext);
     });
 }
 
+//Muestro la sección seleccionada y oculto las otras
+function cargarPagina(e) {
+    e.preventDefault()
+    $(window).scrollTop(0);
+    let seccion = $(e.target).html()
 
-//-----FUNCIONES PARA ORDENAR LOS PRODUCTOS DE LA TIENDA-------
-//Precio: Menor a Mayor
-$("#menorPrimero").click(ordenarMenorMayor);
-function ordenarMenorMayor(){
-    arrayProductos.sort((a,b)=> a.precio - b.precio);
-    $("#grillaProductos").empty();
-    for (const producto of arrayProductos){
-        mostrarLista(producto);
+    if (seccion === "Bimba biocosmética" || seccion === "Inicio"){
+        seccion = "Inicio";
+        $("header").removeClass("menuNavegacion");
+        $("header i").removeClass("text-dark");
+        $(".navbar-toggler").addClass("navbar-dark");
+        $("#seccionProductos").addClass("d-none");
+        $("#seccionPreguntas").addClass("d-none");
+    }else{
+        if(seccion === "VER DETALLES" || seccion === "Ver todos los productos" || seccion === "Productos"){
+            seccion="Productos";
+            $("#seccionInicio").addClass("d-none");
+            $("#seccionPreguntas").addClass("d-none");
+        }else{
+            seccion="Preguntas";
+            $("#seccionInicio").addClass("d-none");
+            $("#seccionProductos").addClass("d-none");
+        }
+        $("header").addClass("menuNavegacion");
+        $("header i").addClass("text-dark");
+        $(".navbar-toggler").removeClass("navbar-dark");
     }
+
+    $('.navbar-collapse').collapse('hide');
+    $(`#seccion${seccion}`).removeClass("d-none");
 }
 
-//Precio: Mayor a menor
-$("#mayorPrimero").click(ordenarMayorMenor);
-function ordenarMayorMenor(){
-    arrayProductos.sort((a,b)=> b.precio - a.precio);
+
+//-----FUNCIONES PARA ORDENAR LOS PRODUCTOS DE LA TIENDA-------
+function ordenar(e){
+   if ($(e.target).attr("id")==="menorPrimero"){
+        arrayProductos.sort((a,b)=> a.precio - b.precio);
+    }else if($(e.target).attr("id")==="mayorPrimero"){
+        arrayProductos.sort((a,b)=> b.precio - a.precio);
+    }
     $("#grillaProductos").empty();
     for (const producto of arrayProductos){
-        mostrarLista(producto);
+        mostrarCard(producto, "grillaProductos");
+        if(producto.stock===0){
+            $(`#${producto.nombre}CardproductosDestacados`).css("opacity", 0.5)
+            $(`#${producto.nombre}CardgrillaProductos`).css("opacity", 0.5)
+        }
     }
 }
 
 
 //-----FUNCIONES PARA FILTRAR LOS PRODUCTOS DE LA TIENDA-------
-$(".checkbox").change(filtrar);
 function filtrar(){
     $("#grillaProductos>div").hide();
     let arrayTemp=[];
@@ -83,13 +202,13 @@ function filtrar(){
         if($(".checkbox")[i].checked){
             switch (i){
                 case 0:
-                    arrayTemp= arrayTemp.concat(arrayProductos.filter(el=>el.nombre=="shampoo"));
+                    arrayTemp= arrayTemp.concat(arrayProductos.filter(el=>el.nombre.split(/(?=[A-Z])/)[0]=="shampoo"));
                     break;
                 case 1:
-                    arrayTemp= arrayTemp.concat(arrayProductos.filter(el=>el.nombre=="acondicionador"));
+                    arrayTemp= arrayTemp.concat(arrayProductos.filter(el=>el.nombre.split(/(?=[A-Z])/)[0]=="acondicionador"));
                     break;
                 case 2:
-                    arrayTemp= arrayTemp.concat(arrayProductos.filter(el=>el.nombre=="combo"));
+                    arrayTemp= arrayTemp.concat(arrayProductos.filter(el=>el.nombre.split(/(?=[A-Z])/)[0]=="combo"));
                     break;
             }
         }
@@ -99,7 +218,7 @@ function filtrar(){
         $("#grillaProductos>div").show();
     }else{
         arrayTemp.forEach(element => {
-            $(`#${element.nombre}Card`).show();  
+            $(`#${element.nombre}CardgrillaProductos`).show();  
         });
     }
 }
@@ -107,26 +226,42 @@ function filtrar(){
 
 //-----FUNCIONES PARA AGREGAR PRODUCTOS AL CARRITO-------
 function agregarAlCarrito(e) {
-    if ($("#finalizar").hasClass("disabled")){
-        $("#finalizar").removeClass("disabled")
-        $("#productosCarrito").empty();
-    }
-    
-    let producto = arrayProductos.find(elemento=>elemento.nombre == e.target.id.split("A")[0]);
-    producto.actualizarStock(1);
-   
-    if(producto.stock>=0){
-        total = total + producto.precio;
-        arrayCarrito.push(producto.nombre);
-        mostrarTotal();
-        mostrarProductoEnCarrito(producto);
+    if($("#formularioEnvio").length===0){
+        let producto;
 
-    }else if($("#formularioEnvio").length===0 && $(".mensaje").length===0 && $("formularioCuotas").length===0) {
-            mostrarMensaje("Lo sentimos. No tenemos stock en este momento");
+        if($(e.target).attr("id")!=undefined){
+            producto=arrayProductos.find(elemento=>elemento.nombre == $(e.target).attr("id").split("A")[0]);
+        }else{
+            producto = arrayProductos.find(elemento=>elemento.nombre == $(e.target).children().attr("id").split("A")[0]);
+        }
+    
+        producto.actualizarStock(1);
+
+        if ($("#btn-finalizar").hasClass("disabled") && producto.stock>=0){
+            activarBotones("btn-finalizar")
+            $("#productosCarrito").empty();
+        }
+
+        if(producto.stock>=0){
+            total = total + producto.precio;
+            arrayCarrito.push(producto.nombre);
+            mostrarTotal();
+            mostrarProductoEnCarrito(producto);
+            if(producto.stock===0){
+                $(`#${producto.nombre}CardproductosDestacados`).css("opacity", 0.5)
+                $(`#${producto.nombre}CardgrillaProductos`).css("opacity", 0.5)
+            }
+        }else {
+            swal("Lo sentimos. No tenemos stock en este momento");
             producto.stock = 0;
             total = total;
         }
+    }
     return total;
+}
+
+function activarBotones(btn){
+    $(`#${btn}`).removeClass("disabled");
 }
 
 //Genero las cards del carrito
@@ -134,32 +269,33 @@ function mostrarProductoEnCarrito(producto){
     let cantidad=arrayCarrito.filter(el => el === producto.nombre).length;
 
     if($(`#${producto.nombre}EnCarrito`).length!=0){
-        $(`#${producto.nombre}Cantidad`).html(`<small class="text-muted">Cantidad: ${cantidad}</small>`)
+        $(`#${producto.nombre}Cantidad`).children().html(`Cantidad: ${cantidad}`)
         $(`#${producto.nombre}Precio`).html(`$${producto.precio*cantidad}`)
     }else{
-        $("#productosCarrito").append(`<div class="card mb-3 row g-0 p-2" style="max-width:540px" id="${producto.nombre}EnCarrito">
+        $("#productosCarrito").append(`<div class="card mb-1 row g-0 p-2 align-" style="max-width:540px" id="${producto.nombre}EnCarrito">
                                             <div class="row g-0">
                                                 <div class="col-md-3">
-                                                    <img src="images/${producto.nombre}.png" class="img-fluid rounded-start" alt="...">
+                                                    <img src="images/${producto.nombre.toLowerCase()}.png" class="img-fluid rounded-start" alt="...">
                                                 </div>
                                                 <div class="col-md-5">
                                                     <div class="card-body">
-                                                        <h6 class="card-title">${producto.nombre.toUpperCase()}</h6>
+                                                        <h6 class="card-title">${producto.nombre.split(/(?=[A-Z])/).join(" ").toUpperCase()}</h6>
                                                         <p class="card-text" id="${producto.nombre}Cantidad"><small class="text-muted">Cantidad: ${cantidad}</small></p>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3 card-body mt-4">
                                                     <p class="text-center" id="${producto.nombre}Precio">$${producto.precio*cantidad}</p>
                                                 </div>
-                                                <div class="col-md-1">
-                                                    <button type="button" class="btn" id="${producto.nombre}Eliminar"><img src="images/eliminar.png" alt="..." class="eliminarImg"></button>
+                                                <div class="col-md-1 mt-4 pt-1">
+                                                    <button type="button" class="btn" id="${producto.nombre}Eliminar"><i class="bi bi-trash tamanoIcono"></i></button>
                                                 </div>
                                             </div>
                                         </div>`)
-    $(`#${producto.nombre}Eliminar`).click(borrarDelCarrito);
+        
+        $(`#${producto.nombre}Eliminar`).click(borrarDelCarrito);
     }
-
-    $("#numBadge").html(`${arrayCarrito.length}`)
+    
+    $("#numBadge").html(`${arrayCarrito.length}`);
 }
 
 //Muestro en el HTML el total del carrito
@@ -167,90 +303,58 @@ function mostrarTotal (){
     $("#total").html(`Total: $${total}`);
 }
 
-//Muestro alerts en el carrito
-function mostrarMensaje (mensaje){
-    if (mensaje == "Lo sentimos. No tenemos stock en este momento"){
-        $("#productosCarrito").append(`<div class="mensaje">
-                                            <div class="alert alert-primary alert-dismissible" role="alert">
-                                                <strong>${mensaje}</strong>
-                                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                            </div>
-                                        </div>`);
-    }else{
-        $("#productosCarrito").append(`<div class="mensaje">
-                                            <div class="text-center mt-4 mb-4">
-                                                <strong>${mensaje}</strong>
-                                            </div>
-                                        </div>`);
-    }
-    $(".mensaje").slideDown();
-}
-
 
 //--------ELIMINAR PRODUCTOS DEL CARRITO----------
 function borrarDelCarrito (e){
-    console.log($(e.target).parent().attr("id"))
     let producto = arrayProductos.find(elemento => elemento.nombre==$(e.target).parent().attr("id").split("Eli")[0]);
     let cantidad = arrayCarrito.filter(el => el === producto.nombre).length;
     
     producto.stock= producto.stock + cantidad;
+    if (producto.stock>0){
+        $(`#${producto.nombre}CardproductosDestacados`).css("opacity", 1);
+        $(`#${producto.nombre}CardgrillaProductos`).css("opacity", 1);
+    }
+
     total = total - producto.precio*cantidad;
     arrayCarrito = arrayCarrito.filter(el => el != producto.nombre);
     $("#numBadge").html(`${arrayCarrito.length}`);
     mostrarTotal();
    
-    $(`#${producto.nombre}EnCarrito`).css({"background-color": "#E8F5E9", "border-color": " #335145"})
-                    .animate(({width: '110%', margin: '-1.25rem'}));
+    $(`#${producto.nombre}EnCarrito`).css({"background-color": "#E8F5E9", "border-color": " #007E33"})
+                                    .animate(({width: '110%', margin: '-1.25rem'}));
     $(`#${producto.nombre}EnCarrito`).slideUp("slow", function () {
         $(`#${producto.nombre}EnCarrito`).remove();
         siCarritoVacio();
     })
 }
 
-function siCarritoVacio () {
-    if ($("#productosCarrito").children().length== 0){
-        mostrarMensaje("El carrito está vacío");
-        desactivarBotones("finalizar");
-    }
-}
 
-function desactivarBotones(nombre){
-    $(`#${nombre}`).addClass("disabled");
-}
-
-
-//-----FUNCIONES PARA CONFIRMAR CARRITO-------
-$("#finalizar").click(finalizarCompra);
+//-----FUNCIONES PARA CONFIRMAR LA COMPRA-------
 function finalizarCompra(e){
-    if(e.target.innerHTML==="Finalizar"){
         localStorage.setItem("compra", JSON.stringify(arrayCarrito));
         $("#productosCarrito").empty();
-        modificarBotonesModal();
+        modificarBotones("volver", "pagar", "seguir-comprando", "finalizar");
         total = descuento(total);
         mostrarTotal();
         preguntarEnvío();
-    }  
-}
+} 
 
-function modificarBotonesModal() {
-    $("#seguirComprando").html(`Volver`);
-    $("#seguirComprando").attr("id","volver");
-    $("#volver").removeAttr("data-bs-dismiss");
-    $(`#volver`).click(volverCarrito);
-
-    $("#finalizar").html(`Pagar`);
-    $("#finalizar").attr("id","pagar");
-    desactivarBotones("pagar");
-    $(`#pagar`).click(formularioPago);
+function modificarBotones (btn1, btn2, btn3, btn4){
+    $(`#btn-${btn1}`).removeClass("d-none");
+    $(`#btn-${btn2}`).removeClass("d-none");
+    $(`#btn-${btn3}`).addClass("d-none");
+    $(`#btn-${btn4}`).addClass("d-none");
 }
 
 //Calculo el descuento    
 function descuento (total) {
-    
     if (total>=5000){
         total = total*0.80;
         mostrarTotal();
-        mostrarMensaje("Tenés 20% de descuento");
+        swal("Tenés 20% de descuento", {
+            buttons: false,
+            timer: 3000,
+          });
     }
     return total;
 }
@@ -270,22 +374,8 @@ function volverCarrito(){
         }
         mostrarTotal();
         localStorage.clear();
-        revertirBotones();
+        modificarBotones("seguir-comprando", "finalizar", "volver", "pagar");
     }
-}
-
-//Modifico los botones del footer del carrito
-function revertirBotones() {
-    $("#volver").unbind("click", volverCarrito);
-    $("#volver").html(`Seguir comprando`);
-    $("#volver").attr("id","seguirComprando");
-    $("#seguirComprando").attr("data-bs-dismiss", "modal");
-
-    $("#pagar").unbind("click", formularioPago);
-    $("#pagar").html(`Finalizar`);
-    $("#pagar").attr("id","finalizar");
-    $("#finalizar").removeClass("disabled");
-    $(`#finalizar`).click(finalizarCompra);
 }
 
 
@@ -295,66 +385,141 @@ function preguntarEnvío(){
                                     <div class="card-body">
                                         <h5 class="card-title">Envío</h5>
                                         <p class="card-text">¿Querés envío a domicilio?</p>
-                                        <a href="#" class="btn btn-primary" id="aceptar">Si</a>
-                                        <a href="#" class="btn btn-primary" id="cancelar">No</a>
+                                        <button type="button" class="btn btn-success" id="btn-aceptar">Si</button>
+                                        <button type="button"class="btn btn-success" id="btn-cancelar">No</button>
                                     </div>
                                 </div>`);
-    $("#aceptar").click(envio);
-    $("#cancelar").click(preguntarCuotas);  
+    $("#btn-aceptar").click(envio);
+    $("#btn-cancelar").click(procederPago);  
     $("#formularioEnvio").slideDown();        
 }
 
 //Función para calcular el costo del envío
 function envio () {
     if (total>=2000){
-        mostrarMensaje(`¡Tenés envío gratis!`);
+        swal(`¡Tenés envío gratis!`);
     }else if (total<2000 && total!=0){
         total=total+700;
         mostrarTotal();
-        mostrarMensaje(`El envío cuesta $700`);
+        swal(`El envío cuesta $700`);
     }
     mostrarTotal();
-    preguntarCuotas();
+    procederPago();
+    return total;
 }
 
 
-//-----FUNCIONES CUOTAS-------
-function preguntarCuotas(){
-    desactivarBotones("aceptar");
-    desactivarBotones("cancelar");
-    $("#productosCarrito").append(`<div id="formularioCuotas">
-                                        <div class="card text-center">
-                                            <div class="card-body">
-                                                <p class="card-text">¿En cuántas cuotas querés pagar?</p>
-                                                <div class="input-group mb-3">
-                                                    <input type="number" class="form-control" id="cuotas" placeholder="Ej: 0" aria-label="Recipient's username" aria-describedby="button-addon2">
-                                                </div>
-                                                <a href="#" class="btn btn-primary" id="confirmar">Aceptar</a>
-                                            </div>
+//-------FUNCIONES PARA EL PAGO DE LA COMPRA---------
+function procederPago(){
+    activarBotones("btn-pagar");
+    $("#productosCarrito").empty();
+    mostrarMensaje(`El total a pagar es $${total}`);
+}
+
+
+function formularioPago () {
+    $("#carritoModal").modal("hide");
+    $("#seccionProductos").addClass("d-none");
+    $("#seccionInicio").addClass("d-none");
+    $("header").addClass("d-none");
+    $("footer").addClass("d-none");
+    $("#btn-flotante-carrito").addClass("d-none")
+    mostrarFormularioPago();
+}
+
+function mostrarFormularioPago () {
+    $(window).scrollTop(0);
+    $("#seccionPago").removeClass("d-none");
+    $("#seccionPago").append( `<h1 class="text-center">Formulario de pago</h1>
+                                <form id="formularioPago" onsubmit="return false">
+                                    <div class="row g-3 mt-4" >
+                                        <h3>Datos personales</h3>
+                                        <div class="col-md-6">
+                                            <label for="inputName" class="form-label">Nombre</label>
+                                            <input type="text" class="form-control" id="inputName" value="María" required>
                                         </div>
-                                    </div>`);
-    $("#confirmar").click(totalAPagar); 
-    $("#formularioCuotas").slideDown();
-}
+                                        <div class="col-md-6">
+                                            <label for="inputSurname" class="form-label">Apellido</label>
+                                            <input type="text" class="form-control" id="inputSurname" value="Martinez" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="inputID" class="form-label">Número de documento</label>
+                                            <input type="number" class="form-control" id="inputID" value="12123123" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="inputEmail4" class="form-label">Email</label>
+                                            <input type="email" class="form-control" id="inputEmail4" value="maria.martinez@gmail.com" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="inputPhone" class="form-label">Teléfono</label>
+                                            <input type="number" class="form-control" id="inputPhone" value="12341234" required>
+                                        </div>
+                                    </div>  
 
-//Calculo el total de carrito
-function totalAPagar () {
-    let cuotas = parseInt($("#cuotas").val());
-    if(isNaN(cuotas)){
-        $("#formularioCuotas").remove();
-        preguntarCuotas();
-    }else{
-        desactivarBotones("confirmar")
-        $("#pagar").removeClass("disabled");
-        let intereses=calcularIntereses(cuotas);
-        total = (total+intereses)
-        mostrarTotal();
-        if (cuotas===0){
-            mostrarMensaje(`El total a pagar es $${total}`);
+                                    <div class="row g-3 mt-4">
+                                        <h3>Datos de envío</h3>
+                                        <div class="col-12">
+                                            <label for="inputAddress" class="form-label">Dirección</label>
+                                            <input type="text" class="form-control" id="inputAddress" placeholder="Paraná 1234" value="Calle 1234" required>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="inputState" class="form-label">Provincia</label>
+                                            <input type="text" class="form-control" id="inputState" value="Buenos Aires" required>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="inputCity" class="form-label">Localidad</label>
+                                            <input type="text" class="form-control" id="inputCity" value="C.A.B.A." required>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label for="inputZip" class="form-label">Código postal</label>
+                                            <input type="text" class="form-control" id="inputZip" value="1234" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-3 mt-4">
+                                        <h3>Pago</h3>
+                                        <div class="col-md-6">
+                                            <label for="inputCardNumber" class="form-label">Número de tarjeta</label>
+                                            <input type="number" class="form-control" id="inputCardNumber" value="1234123412341234" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="inputCardName" class="form-label">Nombre en la tarjeta</label>
+                                            <input type="text" class="form-control" id="inputCardName" value="Maria Martinez" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="inputExpirationDate" class="form-label">Fecha de vencimiento</label>
+                                            <input type="text" class="form-control" id="inputExpirationDate" placeholder="mm/aa" value="12/22" required>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label for="inputCode" class="form-label">CVV</label>
+                                            <input type="text" class="form-control" id="inputCode" value="123" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="formSelecCuotas">Cuotas</label>
+                                            <select class="form-select btn-outline-success" id="formSelecCuotas">
+                                                <option selected>Elegí la cantidad de cuotas</option>
+                                                <option value="1">1 cuota de $${total+calcularIntereses(1)}</option>
+                                                <option value="3">3 cuotas de $${total+calcularIntereses(3)}</option>
+                                                <option value="6">6 cuotas de $${total+calcularIntereses(6)}</option>
+                                                <option value="12">12 cuotas de $${total+calcularIntereses(12)}</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-12 pt-5">
+                                            <button type="submit" class="btn btn-success">Confirmar</button>
+                                        </div>
+                                    </div>
+                                </form>`)
+    
+    $("#formularioPago").submit((e)=>{
+        e.preventDefault()
+
+        if ($("#formSelecCuotas").val()==="Elegí la cantidad de cuotas"){
+            swal("¡Ups!","Parece que no elegiste en cuántas cuotas querés pagar")
         }else{
-            mostrarMensaje(`El total a pagar es $${total} en ${cuotas} cuotas de $${total/cuotas}`);
+            swal(`¡Felicitaciones, ${$(e.target[0]).val()}!`, "El pago se realizó con éxito", "success");
+            $(".swal-button--confirm").click(reiniciarPagina);
         }
-    } 
+    });
 }
 
 //Calculo los intereses de las cuotas
@@ -367,20 +532,28 @@ function calcularIntereses (cuotas) {
     }
 }
 
+//Vuelvo a generar la página principal y limpio los filtros y el carrito
+function reiniciarPagina () {
+    $(window).scrollTop(0);
+    $("#numBadge").html("0");
+    $("#btn-flotante-carrito").removeClass("d-none")
+    resetearCarrito();
+    $(`.checkbox:checked`).prop("checked", false);
+    filtrar();
+    $("#seccionPago").empty()
+                    .addClass("d-none");
+    $("header").removeClass("d-none");
+    $("#seccionInicio").removeClass("d-none");
+    $("footer").removeClass("d-none");}
 
-//-----FUNCIONES ADICIONALES-----
-//Abrir carrito al hacer click en el ícono del carrito (header)
-$(`#imgCarrito`).click(siCarritoVacio);
 
-//Función para resetear el localStorage y la propiedad cantidad de los productos del array
-function formularioPago() {
+//Limpio el carrito para realizar una nueva compra
+function resetearCarrito (){
     $("#productosCarrito").empty();
+    modificarBotones("seguir-comprando", "finalizar", "volver", "pagar"); 
+    siCarritoVacio();
     localStorage.clear();
     total=0;
-    arrayCarrito = [];
-    $("#numBadge").html("0");
     mostrarTotal();
-    revertirBotones();
-    siCarritoVacio();
+    arrayCarrito = [];
 }
-

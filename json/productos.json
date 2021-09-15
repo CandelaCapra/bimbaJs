@@ -1,20 +1,45 @@
 [
     {
-        "nombre": "shampoo",
+        "nombre": "shampooPeloGraso",
         "precio":900,
-        "descripcion":"Aceite de coco, harina de avena, té de tilo y escencia de vainilla.",
-        "stock": 1
+        "stock": 1,
+        "destacado":true
     },
     {
-        "nombre": "acondicionador",
+        "nombre": "shampooPeloNormal",
+        "precio":900,
+        "stock": 9,
+        "destacado":true
+    },
+    {
+        "nombre": "shampooPeloSeco",
+        "precio":900,
+        "stock": 6,
+        "destacado":false
+    },
+    {
+        "nombre": "acondicionadorUniversal",
         "precio":700,
-        "descripcion":"Manteca de karité, aceite de coco y escencia de naranja y mandarina",
-        "stock": 10
+        "stock": 10,
+        "destacado":true
 
-    },{
-        "nombre": "combo",
-        "precio":1100,
-        "descripcion":"Combo shampoo sólido con esencia de vainilla y acondicionador sólido con escencia de naranja y mandarina.",
-        "stock": 15
+    },
+    {
+        "nombre": "comboPeloSeco",
+        "precio":1400,
+        "stock": 15,
+        "destacado":true
+    },
+    {
+        "nombre": "comboPeloGraso",
+        "precio":1400,
+        "stock": 15,
+        "destacado":false
+    },
+    {
+        "nombre": "comboPeloNormal",
+        "precio":1400,
+        "stock": 15,
+        "destacado":false
     }
 ]

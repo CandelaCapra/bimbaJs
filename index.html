@@ -4,37 +4,35 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="stylesheet" href="css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com"> 
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+    <link href="https://fonts.googleapis.com/css2?family=MonteCarlo&family=Raleway:wght@100;200;400;500;600&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="css/main.css">
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script defer src="js/main.js"></script>
-    <title>Carrito Bimba Biocosmética</title>
+    <title>Bimba Biocosmética</title>
 </head>
 <body>
     <header>
-      <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid menuNavegacion">
-          <a class="navbar-brand" href="#">Bimba biocosmética</a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container-fluid me-5 ms-5 p-0">
+          <a class="navbar-brand p-0 btn-seccion" href="index.html" id="btn-logo">Bimba biocosmética</a>
+          <button class="navbar-toggler navbar-dark" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
               <li class="nav-item">
-                <a class="nav-link active" href="#" tabindex="-1" aria-disabled="false">Productos</a>
+                <a class="nav-link active btn-seccion" href="index.html" tabindex="-1" aria-disabled="false">Inicio</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link active" href="#" tabindex="-1" aria-disabled="false">Nosotros</a>
+                <a class="nav-link active btn-seccion" href="#seccionProductos" tabindex="-1" aria-disabled="false">Productos</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link active" href="#" tabindex="-1" aria-disabled="false">Contacto</a>
-              </li>
-              <li class="nav-item carrito">  
-                <button type="button" class="btn position-relative" data-bs-toggle="modal" data-bs-target="#exampleModal" id="imgCarrito"><img src="images/carrito.svg" alt="" id="carrito">
-                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="numBadge">
-                    0
-                  </span>
-                </button>
+                <a class="nav-link active btn-seccion" href="#seccionPreguntas" tabindex="-1" aria-disabled="false">Preguntas</a>
               </li>
             </ul>
           </div>
@@ -43,33 +41,56 @@
     </header> 
 
     <main>
-      <h1 class="mb-2 text-center">Productos</h1>
+      <!--Sección Inicio-->
+      <section id="seccionInicio" class="mb-3 pb-3">
+        <div class="seccionInicio-img-fondo text-center">
+          <p class="text-uppercase text-white seccionInicio-texto pb-1">Bimba bimbabiocosmética</p>
+          <h1 class="text-white pb-5 seccionInicio-titulo">Conocé los beneficios de la cosmética natural</h1>
+          <a href="#seccionProductos" class="btn mt-3 btn-outline-light btn-seccion">VER DETALLES</a>
+        </div>
+        <div class="text-center mx-5 my-4 p-3">
+          <h2 class="mb-5">Productos destacados</h2>
+          <div class="row col-12 p-0 g-2 gx-4 mx-auto" id="productosDestacados">
+          </div>
+          <a href="#seccionProductos" class="btn btn-success mt-1 btn-seccion">Ver todos los productos</a>
+        </div>
+      </section>
 
-      <!--Filtro/orden-->
-      <div class="dropdown text-end">
-        <button class="btn btn-primary dropdown-toggle mb-4" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-          Ordenar
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-          <li><a class="dropdown-item" href="#" id="mayorPrimero">Precio: Mayor a menor</a></li>
-          <li><a class="dropdown-item" href="#" id="menorPrimero">Precio: Menor a mayor</a></li>
-        </ul>
-      </div>
+      <!--Sección productos-->
+      <section class="row mx-5 mt-5 pt-5 px-3 d-none" id="seccionProductos">
+        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="p-0">
+          <ol class="breadcrumb mt-4">
+              <li class="breadcrumb-item"><a href="../index.html" class="text-success">Inicio</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Productos</li>
+          </ol>
+        </nav>
+
+        <h2 class="mb-2 text-center col-12">Productos</h2>
+
+        <!--<Ordenar-->
+        <div class="dropdown text-end col-12 pb-0">
+          <button class="btn btn-success dropdown-toggle mb-3" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+            Ordenar
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+            <li><a class="dropdown-item" href="#" id="mayorPrimero">Precio: Mayor a menor</a></li>
+            <li><a class="dropdown-item" href="#" id="menorPrimero">Precio: Menor a mayor</a></li>
+          </ul>
+        </div>
       
-      <div class="row">
-         <!---Categorías-->
-        <div class="col-2">
-          <h5 class="fw-bold ps-3">Filtros</h5>
+        <!---Filtrar-->
+        <div class="col-2 p-0" id="btn-filtros">
+          <h5 class="fw-bold">Filtros</h5>
           <ul class="list-group">
-            <li class="list-group-item">
+            <li class="list-group-item ps-0 pe-0 border-0">
               <input class="form-check-input checkbox" type="checkbox">
               Shampoo
             </li>
-            <li class="list-group-item">
+            <li class="list-group-item ps-0 pe-0 border-0">
               <input class="form-check-input checkbox" type="checkbox">
               Acondicionador
             </li>
-            <li class="list-group-item">
+            <li class="list-group-item ps-0 pe-0 border-0">
               <input class="form-check-input checkbox" type="checkbox">
               Combos
             </li>
@@ -77,31 +98,143 @@
         </div>
   
         <!--Grilla de productos-->
-        <div class="row col-10" id= "grillaProductos">
+        <div class="row col-10 p-0 g-2 mx-auto" id= "grillaProductos">
         </div>
-      </div>
-      
-      <!--Pop-up carrito-->
-      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+      </section>
+
+      <!--Sección formulario pago-->
+      <section id="seccionPago" class="mx-5 my-4 p-3 d-none">
+      </section>
+    
+      <!--Sección Preguntas-->
+      <section id="seccionPreguntas" class="mx-5 my-4 px-3 d-none">
+        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="mt-5 pt-5">
+          <ol class="breadcrumb mt-4">
+              <li class="breadcrumb-item"><a href="../index.html" class="text-success">Inicio</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Preguntas frecuentes</li>
+          </ol>
+        </nav>
+
+        <h2 class="text-center pb-5">Preguntas frecuentes</h2>
+        <div class="accordion pb-5" id="accordionExample">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingOne">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                ¿Cómo se usa el shampoo sólido?
+              </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+              <div class="accordion-body">
+                <p>Para usar nuestro shampoo sólido solo tenés que seguir estos pasos:</p>
+                <ol>
+                  <li>Humedecer el cabello</li>
+                  <li>Frotar el shampoo con las manos para hacer espuma</li>
+                  <li>Masajear el cuero cabelludo</li>
+                  <li>Enjuagar con abundante agua</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingTwo">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                ¿Cómo se usa el acondicionador?
+              </button>
+            </h2>
+            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+              <div class="accordion-body">
+                <p>Nuestro acondicionador se puede usar de dos maneras:</p>
+                <ol>
+                  <li>Sólido: Usar la barra directamente sobre el cabello y luego enjuagar.</li>
+                  <li>Baño de crema: Derretir medio corazón en medio pocillo con agua hirviendo y revolver hasta fundir. Para una mejor consistencia se puede enfriar. Luego aplicar sobre el pelo, esperar unos minutos y enjuagar bien.</li>
+                </ol>  
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingThree">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                ¿Cuánto dura?
+              </button>
+            </h2>
+            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+              <div class="accordion-body">
+                <p>Las pastillas pesan 100 gramos y duran más de 80 lavados.</p>  
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingFour">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                ¿El shampoo tiene período de ajuste o adaptación?
+              </button>
+            </h2>
+            <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#accordionExample">
+              <div class="accordion-body">
+                <p>Nuestros productos no necesitan período de ajuste, vas a notar los cambios en el primer lavado.</p>   
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingFive">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                ¿Qué es el SCI?
+              </button>
+            </h2>
+            <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#accordionExample">
+              <div class="accordion-body">
+                <p>El SCI es un tensioactivo derivado del coco que proporciona mucha espuma y deja un efecto suave en el cabello.</p> 
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!--Modal carrito-->
+      <div class="modal fade" id="carritoModal" tabindex="-1" aria-labelledby="carritoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Carrito de compras</h5>
+              <h5 class="modal-title" id="carritoModalLabel">Carrito de compras</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="productosCarrito">
             </div>
             <div class="modal-footer" id = "footer-modal">
               <p class="me-auto" id="total"><strong>Total: </strong></p>
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id = "seguirComprando">Seguir Comprando</button>
-              <button type="button" class="btn btn-primary" id="finalizar">Finalizar</button>
+              <button type="button" class="btn btn-outline-success" data-bs-dismiss="modal" id = "btn-seguir-comprando">Seguir Comprando</button>
+              <button type="button" class="btn btn-success" id="btn-finalizar">Finalizar</button>
+              <button type="button" class="btn btn-outline-success d-none" id = "btn-volver">Volver</button>
+              <button type="button" class="btn btn-success d-none disabled" id="btn-pagar">Pagar</button>
             </div>
           </div>
         </div>
       </div>
     </main> 
 
-    <footer class="font-small">
+    <footer class="font-small p-2">
+      <div class="container-fluid">
+        <div class="row pt-5 px-5">
+          <div class="col-lg-6 contacto">
+            <ul>
+              <li class="list-unstyled"><i class="bi bi-geo-alt-fill tamanoIcono"></i> Villa Adelina, Buenos Aires</li>
+              <li class="list-unstyled"><i class="bi bi-envelope-open-fill tamanoIcono"></i> <a href="mailto:bimbabiocosmetica@gmail.com" class="text-decoration-none text-dark">bimbabiocosmetica@gmail.com</a></li>
+            </ul>
+          </div>
+      
+          <div class="col-lg-6">
+            <div>
+              <h6 class="fw-bold">About us</h6>
+              <p class="text-justify">Nos dedicamos a la fabricación de shampoo y acondicionador vegano y 100% natural. No testeamos en animales y sólo trabajamos con materiales reciclables. Además, todos nuestros productos están libres de siliconas, sulfatos, paralelos y conservantes. </p>
+            </div>
+              <div class="text-center">
+              <a href="https://www.facebook.com/bimbabiocosmetica-104029528252820" target="_blank" class="p-2"><i class="bi bi-facebook tamanoIcono text-dark"></i></a>
+              <a href="https://www.instagram.com/bimbabiocosmetica/" target="_blank" class="p-2"><i class="bi bi-instagram tamanoIcono text-dark"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="text-center py-3">
           © 2021 Copyright: Bimba biocosmética
       </div>
