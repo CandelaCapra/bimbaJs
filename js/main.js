@@ -26,7 +26,7 @@ function cargarSitio () {
 
     //---------CARGO LOS PRODUCTOS----------
     //Obtengo el array de productos desde el archivo JSON
-    $.getJSON("./json/productos.json", function (productos) {
+    $.getJSON("./assets/productos.json", function (productos) {
         for (const producto of productos){
             arrayProductos.push(new Producto (producto.nombre, producto.precio, producto.descripcion, producto.stock, producto.destacado));
             mostrarCard(producto, "grillaProductos");
