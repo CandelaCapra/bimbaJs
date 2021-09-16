@@ -91,7 +91,8 @@ function cargarSitioSegunMediaQueries (){
         $("#btn-filtros ul").addClass("flex-row justify-content-center");
         $("#btn-filtros li").removeClass("ps-0 pe-0");
         $("#grillaProductos").addClass("w-100");
-        $("#dropdownMenuButton1").parent().addClass("text-center pt-4");
+        $("#dropdownMenuButton1").parents().eq(0).addClass("text-center pt-4")
+                                            .removeClass("text-end")
         $("#accordionExample").removeClass("px-3");
     }
 }
