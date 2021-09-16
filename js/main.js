@@ -84,6 +84,8 @@ function cargarSitioSegunMediaQueries (){
         $(`#btn-flotante-carrito`).click(siCarritoVacio);
 
         //Agrego y elimino clases para ajustar el contenido a las pantalla mobile 
+        $(".navbar>div").removeClass("mx-5");
+        $(".navbar>div").addClass("px-4");        
         $(".seccionInicio-texto").css("padding-top", "30vh")
         $("#btn-filtros").addClass("mb-3 col-12")
                         .removeClass("col-2");
@@ -94,6 +96,8 @@ function cargarSitioSegunMediaQueries (){
         $("#dropdownMenuButton1").parents().eq(0).addClass("text-center pt-4")
                                             .removeClass("text-end");
         $("#accordionExample").removeClass("px-3");
+        $(".contacto").parents().eq(0).removeClass("px-5")
+                                    .addClass("px-3");
     }
 }
 
@@ -281,19 +285,19 @@ function mostrarProductoEnCarrito(producto){
     }else{
         $("#productosCarrito").append(`<div class="card mb-1 row g-0 p-2 align-" style="max-width:540px" id="${producto.nombre}EnCarrito">
                                             <div class="row g-0">
-                                                <div class="col-md-3">
+                                                <div class="col-3">
                                                     <img src="images/${producto.nombre.toLowerCase()}.png" class="img-fluid rounded-start" alt="...">
                                                 </div>
-                                                <div class="col-md-5">
+                                                <div class="col-5">
                                                     <div class="card-body">
                                                         <h6 class="card-title">${producto.nombre.split(/(?=[A-Z])/).join(" ").toUpperCase()}</h6>
                                                         <p class="card-text" id="${producto.nombre}Cantidad"><small class="text-muted">Cantidad: ${cantidad}</small></p>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-3 card-body mt-4">
+                                                <div class="col-3 card-body mt-4">
                                                     <p class="text-center" id="${producto.nombre}Precio">$${producto.precio*cantidad}</p>
                                                 </div>
-                                                <div class="col-md-1 mt-4 pt-1">
+                                                <div class="col-1 mt-4 pt-1">
                                                     <button type="button" class="btn" id="${producto.nombre}Eliminar"><i class="bi bi-trash tamanoIcono"></i></button>
                                                 </div>
                                             </div>
