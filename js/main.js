@@ -61,6 +61,7 @@ function cargarSitio () {
 //Media queries para que el sitio sea responsive
 function cargarSitioSegunMediaQueries (){
     if ($(window).width()>=992){
+        //Creo el botón del carrito en la barra de navegación (header)
         $("#navbarSupportedContent ul").append(`<li class="nav-item carrito">  
                                                     <button type="button" class="btn position-relative p-0" data-bs-toggle="modal" data-bs-target="#carritoModal" id="btn-carrito">
                                                         <i class="bi bi-cart4 tamanoIcono text-light"></i>
@@ -71,6 +72,7 @@ function cargarSitioSegunMediaQueries (){
         $(`#btn-carrito`).click(siCarritoVacio);
 
     }else{
+        //Creo un botón flotante para el carrito
         $("main").append(`<!--Botón flotante para mobile-->
                         <div class="position-fixed" style="bottom:10vh; right:10vh">
                             <button type="button" class="btn position-relative p-0" data-bs-toggle="modal" data-bs-target="#carritoModal" id="btn-flotante-carrito">
@@ -81,12 +83,16 @@ function cargarSitioSegunMediaQueries (){
         
         $(`#btn-flotante-carrito`).click(siCarritoVacio);
 
+        //Agrego y elimino clases para ajustar el contenido a las pantalla mobile 
+        $(".seccionInicio-texto").css("padding-top", "30vh")
         $("#btn-filtros").addClass("mb-3 col-12")
                         .removeClass("col-2");
         $("#btn-filtros h5").remove();
         $("#btn-filtros ul").addClass("flex-row justify-content-center");
         $("#btn-filtros li").removeClass("ps-0 pe-0");
-        $("footer .contacto").addClass("text-center");
+        $("#grillaProductos").addClass("w-100");
+        $("#dropdownMenuButton1").parent().addClass("text-center pt-4");
+        $("#accordionExample").removeClass("px-3");
     }
 }
 
@@ -114,7 +120,7 @@ function desactivarBotones(idBoton){
 
 //Genero las cards en el HTML a partir del array
 function mostrarCard(producto,ubicacion){
-    $(`#${ubicacion}`).append(`<div class="col-sm-6 col-md-4 col-lg-3" id="${producto.nombre}Card${ubicacion}">
+    $(`#${ubicacion}`).append(`<div class="col-sm-6 col-md-4 col-lg-3 m-0" id="${producto.nombre}Card${ubicacion}">
                                     <div class="card mb-2 text-center border-0">
                                         <div class="row align-items-end">    
                                             <img src="images/${producto.nombre.toLowerCase()}.png" class="card-img-top">   
